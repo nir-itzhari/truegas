@@ -8,7 +8,7 @@ async function verifyLoggedIn(request: Request, response: Response, next: NextFu
 
     const isValid = await cyber.verifyToken(authorizationHeader);
 
-    if(!isValid) {
+    if (!isValid) {
         next(new ErrorModel(401, "You are not logged in"));
         return;
     }

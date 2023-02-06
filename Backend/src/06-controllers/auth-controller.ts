@@ -5,17 +5,17 @@ import authLogic from '../05-logic/auth-logic';
 
 const router = express.Router();
 
-router.post('/register',async (request: Request, response: Response, next: NextFunction) => {
-    try {
-      const user = new UserModel(request.body);
-      const token = await authLogic.register(user);
+router.post('/register', async (request: Request, response: Response, next: NextFunction) => {
+  try {
+    const user = new UserModel(request.body);
+    const token = await authLogic.register(user);
 
-      response.status(201).json(token);
+    response.status(201).json(token);
 
-    } catch (error: any) {
-      next(error);
-    }
+  } catch (error: any) {
+    next(error);
   }
+}
 );
 
 router.post('/login', async (request: Request, response: Response, next: NextFunction) => {

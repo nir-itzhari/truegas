@@ -1,5 +1,5 @@
 class ErrorModel {
-    
+
     public status: number;
     public message: string;
 

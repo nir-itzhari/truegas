@@ -8,10 +8,10 @@ function errorsHandler(err: any, request: Request, response: Response, next: Nex
     console.log(err);
 
     let msg;
-    if(config.isDevelopment) {
+    if (config.isDevelopment) {
         msg = err.message;
     }
-    else if(status !== 500) {
+    else if (status !== 500) {
         msg = err.message;
     }
     else {

@@ -10,7 +10,7 @@ async function isUserIdFree(userId: number): Promise<boolean> {
 }
 
 async function register(user: IUserModel): Promise<string> {
-  
+
   try {
     await user.validate();
   } catch (error) {
@@ -35,7 +35,7 @@ async function register(user: IUserModel): Promise<string> {
 
 
 async function login(credentials: ICredentialsModel): Promise<string> {
-  
+
   try {
     await credentials.validate();
   } catch (error) {

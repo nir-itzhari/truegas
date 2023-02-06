@@ -30,8 +30,8 @@ function verifyToken(autorizationHeader: string): Promise<boolean> {
       return;
     }
 
-    console.log("autorizationHeader - " , autorizationHeader);
-    
+    console.log("autorizationHeader - ", autorizationHeader);
+
     const token = autorizationHeader.split(' ')[1];
 
     if (!token) {
