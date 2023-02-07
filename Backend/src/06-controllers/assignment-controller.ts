@@ -31,6 +31,7 @@ router.get('/assignments/:clientId', async (request: Request, response: Response
 router.post('/assignment', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
         request.body.image = request.files?.image
+        // console.log(request.body)
         const assignment = new AssignmentModel(request.body);
         const addedAssignments = await assignmentsLogic.addAssignment(assignment);
 

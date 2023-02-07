@@ -13,7 +13,7 @@ async function updateImage(oldImageId: Schema.Types.ObjectId, newImage: Uploaded
     if (!oldImage) {
         throw new ErrorModel(404, `Image with _id ${oldImageId} not found`);
     }
-    const oldImageName = oldImage.imageName;
+    const oldImageName = oldImage.name;
     const oldImageAbsolutePath = path.join(
         __dirname,
         '..',
@@ -73,7 +73,7 @@ async function deleteImage(imageId: Schema.Types.ObjectId) {
             '..',
             'assets',
             'images',
-            imageToDelete.imageName
+            imageToDelete.name
         );
 
         unlinkSync(absolutePath);

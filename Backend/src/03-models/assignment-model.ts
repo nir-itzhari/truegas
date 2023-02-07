@@ -29,7 +29,9 @@ const AssignmentSchema = new Schema<IAssignmentModel>({
     image_id: [{
         type: Schema.Types.ObjectId,
     }],
-    image: [ImageScheme]
+    image: {
+        type: [Object]
+    }
 }, {
     versionKey: false,
     toJSON: { virtuals: true },
@@ -37,10 +39,10 @@ const AssignmentSchema = new Schema<IAssignmentModel>({
 });
 
 
-const virtuals = ['images', 'clients', 'users'];
+const virtuals = ['images', 'client', 'user'];
 
 virtuals.forEach(virtual => {
-    const modelName = `${virtual.charAt(0).toUpperCase()}${virtual.slice(1)}Model`;
+    const modelName = `${virtual.charAt(0)}${virtual.slice(1)}Model`;
 
     AssignmentSchema.virtual(virtual, {
         ref: modelName,

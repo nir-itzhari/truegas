@@ -4,7 +4,7 @@ export interface IClientModel extends Document {
     fullName: string;
     city: string;
     street: string;
-    bulidingNumber: number;
+    buildingNumber: number;
     floor: number;
     apartmentNumber: number;
     phoneNumber: [number];
@@ -31,7 +31,7 @@ const ClientSchema = new Schema<IClientModel>(
             maxlength: [50, 'Street Too long.'],
             trim: true,
         },
-        bulidingNumber: {
+        buildingNumber: {
             type: Number,
             required: [true, "Building Number is missing"],
             min: [1, 'Building Number must be more then 0.'],

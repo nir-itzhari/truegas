@@ -1,32 +1,32 @@
-import { Document, model, ObjectId, Schema } from 'mongoose';
-import { UploadedFile } from 'express-fileupload';
+import { Document, model, Schema } from 'mongoose';
 
 
 export interface IImageModel extends Document {
-    image: UploadedFile;
-    encoding: string;
+    // image: UploadedFile;
+    // encoding: string;
+    name: string;
     mimetype: string;
     size: number;
-    imageName: string;
     assaignment_id: Schema.Types.ObjectId;
 }
 
 export const ImageScheme = new Schema<IImageModel>(
     {
-        image: {
-            type: Buffer,
-            required: true,
-            max: 2 * 1024 * 1024,
-        },
-        imageName: {
+        // image: {
+        //     type: Object,
+        //     required: true,
+        //     max: 2 * 1024 * 1024,
+        // },
+        
+        name: {
             type: String,
             required: true,
             match: /\.(jpeg|jpg|png)$/,
         },
-        encoding: {
-            type: String,
-            required: true,
-        },
+        // encoding: {
+        //     type: String,
+        //     required: true,
+        // },
         mimetype: {
             type: String,
             required: true,
@@ -39,7 +39,6 @@ export const ImageScheme = new Schema<IImageModel>(
         },
         assaignment_id: {
             type: Schema.Types.ObjectId,
-            required: true
         },
 
     },
