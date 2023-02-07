@@ -12,6 +12,7 @@ import errorsHandler from "./02-middleware/errors-handler";
 import ErrorModel from "./03-models/error-model";
 import authController from "./06-controllers/auth-controller";
 import assignmentController from "./06-controllers/assignment-controller";
+import clientController from "./06-controllers/client-controller";
 
 
 
@@ -24,6 +25,7 @@ expressServer.use(fileUpload());
 
 expressServer.use("/api/auth", authController);
 expressServer.use("/api", assignmentController);
+expressServer.use("/api", clientController);
 expressServer.use("*", (request: Request, response: Response, next: NextFunction) => {
     next(new ErrorModel(404, "Route not found."));
 });
