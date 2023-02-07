@@ -1,6 +1,5 @@
 import { Document, model, Schema } from 'mongoose';
 import { UploadedFile } from 'express-fileupload';
-import { ImageScheme } from './image-model';
 
 export interface IAssignmentModel extends Document {
     description: string;
