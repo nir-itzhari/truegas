@@ -5,17 +5,18 @@ async function getAllClients(): Promise<IClientModel[]> {
     return ClientModel.find().exec()
 }
 
+async function getClientById(_id: string): Promise<IClientModel> {
+    return ClientModel.findById(_id).exec()
+}
 
 async function addClient(client: IClientModel): Promise<IClientModel> {
     return client.save()
 }
 
-
-async function updateClient(client: Partial<IClientModel>): Promise<IClientModel> {
-    const { _id } = client;
-    const updatedClient = await ClientModel.findByIdAndUpdate(_id, client, { new: true }).exec();
+async function updateClient(id: string, clientToUpdate: Partial<IClientModel>): Promise<IClientModel> {
+    const updatedClient = await ClientModel.findByIdAndUpdate(id, { $set: clientToUpdate }, { new: true }).exec();
     return updatedClient;
-}
+  }
 
 async function deleteClient(_id: string): Promise<IClientModel> {
     const deletedClient = await ClientModel.findByIdAndDelete(_id).exec();
@@ -23,8 +24,9 @@ async function deleteClient(_id: string): Promise<IClientModel> {
 }
 
 export default {
-    addClient,
     getAllClients,
+    getClientById,
+    addClient,
     updateClient,
     deleteClient
 }
