@@ -22,16 +22,15 @@ async function getAssignmentsByClientId(clientId: string): Promise<IAssignmentMo
 // Function to add an assignment
 async function addAssignment(assignment: IAssignmentModel): Promise<IAssignmentModel> {
 
-    // try {
-    //     await assignment.validate();
-    // } catch (error) {
-    //     throw new ErrorModel(400, error.message);
-    // }
+    try {
+        await assignment.validate();
+    } catch (error) {
+        throw new ErrorModel(400, error.message);
+    }
 
 
     // Only if images were sent.
     if (assignment.image && assignment.image.length) {
-        console.log(assignment, "BEFORE THE FOR")
 
         for (const imageExt of assignment.image) {
             const extension = imageExt.name.substring(imageExt.name.lastIndexOf('.'));
@@ -54,14 +53,12 @@ async function addAssignment(assignment: IAssignmentModel): Promise<IAssignmentM
                 size: imageExt.size,
                 assaignment_id: assignment._id
             });
-            console.log(assignment, "BEFORE THE SAVE THE IMAGE")
             
             const savedImage = await newImage.save();
             // Add the id of the saved image to the assignment's image_id array
             assignment.image_id.push(savedImage._id);
         }
         // Remove the original images array
-        console.log(assignment, "123")
         assignment.image = [];
         delete assignment.image
     }
