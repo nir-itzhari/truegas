@@ -14,23 +14,11 @@ async function updateImage(oldImageId: Schema.Types.ObjectId, newImage: Uploaded
         throw new ErrorModel(404, `Image with _id ${oldImageId} not found`);
     }
     const oldImageName = oldImage.name;
-    const oldImageAbsolutePath = path.join(
-        __dirname,
-        '..',
-        'assets',
-        'images',
-        oldImageName
-    );
+    const oldImageAbsolutePath = path.join(__dirname, '..', 'assets', 'images', oldImageName);
 
     const extension = newImage.name.substring(newImage.name.lastIndexOf('.'));
     const imageUrl = `${uuid()}${extension}`;
-    const absolutePath = path.join(
-        __dirname,
-        '..',
-        'assets',
-        'images',
-        imageUrl
-    );
+    const absolutePath = path.join(__dirname, '..', 'assets', 'images', imageUrl);
 
     await new Promise<void>((resolve, reject) => {
         newImage.mv(absolutePath, error => {
@@ -67,14 +55,7 @@ async function deleteImage(imageId: Schema.Types.ObjectId) {
         if (!imageToDelete) {
             throw new ErrorModel(404, `Image with _id ${imageId} not found`);
         }
-
-        const absolutePath = path.join(
-            __dirname,
-            '..',
-            'assets',
-            'images',
-            imageToDelete.name
-        );
+        const absolutePath = path.join(__dirname, '..', 'assets', 'images', imageToDelete.name);
 
         unlinkSync(absolutePath);
 

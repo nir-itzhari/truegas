@@ -35,25 +35,17 @@ async function addAssignment(assignment: IAssignmentModel): Promise<IAssignmentM
         for (const imageExt of assignment.image) {
             const extension = imageExt.name.substring(imageExt.name.lastIndexOf('.'));
             const imageName = `${uuid()}${extension}`;
-            const absolutePath = path.join(
-                __dirname,
-                '..',
-                'assets',
-                'images',
-                imageName
-            );
+            const absolutePath = path.join(__dirname, '..', 'assets', 'images', imageName);
             // Move the image to the specified directory
             await imageExt.mv(absolutePath);
             // Save the image in the ImageModel collection
             const newImage = new ImageModel({
-                // image: imageExt.data,
                 name: imageName,
-                // encoding: imageExt.encoding,
                 mimetype: imageExt.mimetype,
                 size: imageExt.size,
                 assaignment_id: assignment._id
             });
-            
+
             const savedImage = await newImage.save();
             // Add the id of the saved image to the assignment's image_id array
             assignment.image_id.push(savedImage._id);
@@ -62,7 +54,7 @@ async function addAssignment(assignment: IAssignmentModel): Promise<IAssignmentM
         assignment.image = [];
         delete assignment.image
     }
-        // Create a new assignment model with the data
+    // Create a new assignment model with the data
 
     const newAssignment = new AssignmentModel(assignment);
     // Save and return the new assignment
