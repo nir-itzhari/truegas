@@ -49,7 +49,8 @@ virtuals.forEach(virtual => {
     AssignmentSchema.virtual(virtual, {
         ref: modelName,
         localField: `${virtual}_id`,
-        foreignField: '_id'
+        foreignField: '_id',
+        justOne: true
     });
 });
 
