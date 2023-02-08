@@ -9,13 +9,16 @@ import imageLogic from './image-logic';
 
 // Get all assignments without the image data
 async function getAllAssignments(): Promise<IAssignmentModel[]> {
-    return AssignmentModel.find().select("-image").populate('client').populate('image').populate('user').exec()
+    return AssignmentModel.find().select("-imageFile").select("-image")
+        .populate({path:'user', select: '-_id user_id'})
+        .populate({path:'client', select: '-_id'})
+        .populate({path:'image', select: '-_id name'}).exec()
 }
 
 
 // Get all assignments for a specific client id without the image data
 async function getAssignmentsByClientId(clientId: string): Promise<IAssignmentModel[]> {
-    return AssignmentModel.find({ client_id: clientId }).select("-image").exec()
+    return AssignmentModel.find({ client_id: clientId }).exec()
 }
 
 
@@ -30,9 +33,9 @@ async function addAssignment(assignment: IAssignmentModel): Promise<IAssignmentM
 
 
     // Only if images were sent.
-    if (assignment.image && assignment.image.length) {
+    if (assignment.imageFile && assignment.imageFile.length) {
 
-        for (const imageExt of assignment.image) {
+        for (const imageExt of assignment.imageFile) {
             const extension = imageExt.name.substring(imageExt.name.lastIndexOf('.'));
             const imageName = `${uuid()}${extension}`;
             const absolutePath = path.join(__dirname, '..', 'assets', 'images', imageName);
@@ -51,8 +54,7 @@ async function addAssignment(assignment: IAssignmentModel): Promise<IAssignmentM
             assignment.image_id.push(savedImage._id);
         }
         // Remove the original images array
-        assignment.image = [];
-        delete assignment.image
+        assignment.imageFile = [];
     }
     // Create a new assignment model with the data
 
@@ -75,12 +77,12 @@ async function updateAssingment(assignment: IAssignmentModel): Promise<IAssignme
     const oldAssignment = await AssignmentModel.findById({ assignment: assignment._id });
 
     // Check if the client has sent an updated image
-    if (assignment.image && assignment.image.length) {
+    if (assignment.imageFile && assignment.imageFile.length) {
         // Get the old image ids
         const oldImagesIds = oldAssignment.image_id;
         // Loop through the old image ids
         for (let i = 0; i < oldImagesIds.length; i++) {
-            await imageLogic.updateImage(oldImagesIds[i], assignment.image[i]);
+            await imageLogic.updateImage(oldImagesIds[i], assignment.imageFile[i]);
         }
     } else {
         // If the client has not sent an updated image, set the image_id to the old image ids
@@ -114,22 +116,26 @@ async function deleteAssignment(assignmentId: string): Promise<void> {
     await AssignmentModel.findByIdAndDelete(assignmentId).exec();
 }
 
-// Function to filering an assignments
+// Function to filter assignments
 async function filterAssignments(filters: IFilterModel): Promise<IAssignmentModel[]> {
+    // Validate the filters to ensure they are in the correct format
     try {
         await filters.validate();
     } catch (error) {
+        // If the filters are invalid, throw an error with a status code of 400 and an error message
         throw new ErrorModel(400, error.message);
     }
 
+    // Initialize an empty filterCriteria object
     let filterCriteria = {};
 
-    // Iterate over filters and add each filter to the filterCriteria object
+    // Iterate over the filters and add each filter to the filterCriteria object
     for (const [key, value] of Object.entries(filters)) {
         filterCriteria[key] = value;
     }
 
     // Find all assignments that match the filter criteria
+    // and exclude the "image" field from the returned assignments
     return AssignmentModel.find(filterCriteria).select("-image").exec();
 }
 

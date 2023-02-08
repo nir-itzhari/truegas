@@ -1,17 +1,17 @@
 import { Document, model, Schema } from 'mongoose';
 
 export interface ICredentialsModel extends Document {
-  userId: number;
+  user_id: number;
   password: string;
 }
 
 const CredentialsSchema = new Schema<ICredentialsModel>(
   {
-    userId: {
+    user_id: {
       type: Number,
-      required: [true, 'Missing userId'],
-      minlength: [4, 'userId Too Short.'],
-      maxlength: [100, 'userId Too long.'],
+      required: [true, 'Missing user Id'],
+      minlength: [4, 'user Id Too Short.'],
+      maxlength: [100, 'user Id Too long.'],
       trim: true,
     },
     password: {

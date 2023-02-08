@@ -3,8 +3,8 @@ import { IUserModel, UserModel } from '../03-models/user-model';
 import ErrorModel from '../03-models/error-model';
 import cyber from '../01-utils/cyber';
 
-async function isUserIdFree(userId: number): Promise<boolean> {
-  const count = await UserModel.countDocuments({ userId: userId }).exec();
+async function isUserIdFree(user_id: number): Promise<boolean> {
+  const count = await UserModel.countDocuments({ user_id: user_id }).exec();
 
   return count === 0;
 }
@@ -17,9 +17,9 @@ async function register(user: IUserModel): Promise<string> {
     throw new ErrorModel(400, error.message);
   }
 
-  const existingUser = await isUserIdFree(user.userId);
+  const existingUser = await isUserIdFree(user.user_id);
   if (!existingUser) {
-    throw new ErrorModel(400, `Sorry. ID ${user.userId} is not available.`)
+    throw new ErrorModel(400, `Sorry. ID ${user.user_id} is not available.`)
   }
 
 
@@ -46,7 +46,7 @@ async function login(credentials: ICredentialsModel): Promise<string> {
   credentials.password = cyber.hash(credentials.password);
 
   const users = await UserModel.find({
-    userId: credentials.userId,
+    user_id: credentials.user_id,
     password: credentials.password,
   }).exec();
   console.log('users: ', users);

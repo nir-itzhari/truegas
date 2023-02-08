@@ -17,7 +17,7 @@ export const ImageScheme = new Schema<IImageModel>(
         //     required: true,
         //     max: 2 * 1024 * 1024,
         // },
-        
+
         name: {
             type: String,
             required: true,
@@ -44,7 +44,6 @@ export const ImageScheme = new Schema<IImageModel>(
     },
     {
         versionKey: false,
-        toJSON: { virtuals: true },
         id: false
     }
 )

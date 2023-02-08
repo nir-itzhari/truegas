@@ -1,14 +1,14 @@
 import { Document, model, Schema } from 'mongoose';
 
 export interface IUserModel extends Document {
-  userId: number;
+  user_id: number;
   password: string;
   isAdmin: boolean;
 }
 
 const UserSchema = new Schema<IUserModel>(
   {
-    userId: {
+    user_id: {
       type: Number,
       required: [true, 'Missing User Id'],
       minlength: [7, 'Id Too Short.'],

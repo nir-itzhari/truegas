@@ -1,12 +1,15 @@
 import { Document, model, Schema } from 'mongoose';
 import { UploadedFile } from 'express-fileupload';
+import { UserModel } from './user-model';
+import { ImageModel } from './image-model';
+import { ClientModel } from './client-model';
 
 export interface IAssignmentModel extends Document {
     description: string;
-    userId: Schema.Types.ObjectId;
+    user_id: Schema.Types.ObjectId;
     client_id: Schema.Types.ObjectId;
     image_id: [Schema.Types.ObjectId];
-    image: UploadedFile[];
+    imageFile: UploadedFile[];
 }
 
 const AssignmentSchema = new Schema<IAssignmentModel>({
@@ -21,14 +24,14 @@ const AssignmentSchema = new Schema<IAssignmentModel>({
         type: Schema.Types.ObjectId,
         required: true,
     },
-    userId: {
+    user_id: {
         type: Schema.Types.ObjectId,
         required: true,
     },
     image_id: [{
         type: Schema.Types.ObjectId,
     }],
-    image: {
+    imageFile: {
         type: [Object]
     }
 }, {
@@ -38,14 +41,14 @@ const AssignmentSchema = new Schema<IAssignmentModel>({
 });
 
 
-const virtuals = ['images', 'client', 'user'];
+const virtuals = ['client', 'user', 'image'];
 
 virtuals.forEach(virtual => {
-    const modelName = `${virtual.charAt(0)}${virtual.slice(1)}Model`;
-
+    const modelName = `${virtual.charAt(0).toUpperCase()}${virtual.slice(1)}Model`;
+    console.log(`${virtual}_id`)
     AssignmentSchema.virtual(virtual, {
         ref: modelName,
-        localField: `${virtual.slice(0, -1)}_id`,
+        localField: `${virtual}_id`,
         foreignField: '_id'
     });
 });

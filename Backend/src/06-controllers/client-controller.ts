@@ -29,7 +29,8 @@ router.post('/client', async (request: Request, response: Response, next: NextFu
 
 router.put('/client', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
-        const updatedClient = await clientLogic.updateClient(request.body);
+        const clientDetailsToUpdate = new ClientModel(request.body)
+        const updatedClient = await clientLogic.updateClient(clientDetailsToUpdate);
 
         response.status(200).json(updatedClient);
     } catch (err: any) {
