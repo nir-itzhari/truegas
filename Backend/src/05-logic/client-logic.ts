@@ -2,7 +2,17 @@ import { ClientModel, IClientModel } from './../03-models/client-model';
 
 
 async function getAllClients(): Promise<IClientModel[]> {
-    return ClientModel.find().exec()
+    return ClientModel.find()
+        .populate({
+            path: 'assignment',
+            select: '_id date description image_id',
+            populate: {
+                path: 'image_id',
+                select: 'name'
+            }
+        })
+        .select('-imageFile')
+        .exec()
 }
 
 async function getClientById(_id: string): Promise<IClientModel> {

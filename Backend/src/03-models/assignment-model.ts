@@ -1,5 +1,6 @@
 import { Document, model, Schema } from 'mongoose';
 import { UploadedFile } from 'express-fileupload';
+import { ImageModel } from './image-model';
 
 
 export interface IAssignmentModel extends Document {
@@ -39,15 +40,18 @@ const AssignmentSchema = new Schema<IAssignmentModel>({
     },
     image_id: [{
         type: Schema.Types.ObjectId,
+        ref: ImageModel
     }],
     imageFile: {
         type: [Object]
     }
-}, {
-    versionKey: false,
-    toJSON: { virtuals: true },
-    id: false,
-});
+},
+    {
+        versionKey: false,
+        toJSON: { virtuals: true },
+        id: false,
+        
+    });
 
 
 const virtuals = ['client', 'user', 'image'];
@@ -59,8 +63,8 @@ virtuals.forEach(virtual => {
         ref: modelName,
         localField: `${virtual}_id`,
         foreignField: '_id',
-        justOne: true
     });
+    
 });
 
 

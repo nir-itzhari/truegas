@@ -1,4 +1,5 @@
 import { Document, model, Schema } from 'mongoose';
+import { AssignmentModel } from './assignment-model';
 
 export interface IClientModel extends Document {
     fullName: string;
@@ -8,7 +9,7 @@ export interface IClientModel extends Document {
     floor: number;
     apartmentNumber: number;
     phoneNumber: [number];
-    assaignment_id: [Schema.Types.ObjectId];
+    assignment_id: [Schema.Types.ObjectId];
 }
 
 const ClientSchema = new Schema<IClientModel>(
@@ -59,7 +60,7 @@ const ClientSchema = new Schema<IClientModel>(
             minlength: [9, 'Phone Number must be more then 8 digits.'],
             max: [10, 'Phone Number cannot be more then 8 digits.'],
         },
-        assaignment_id: [{
+        assignment_id: [{
             type: Schema.Types.ObjectId,
         }]
     },
@@ -69,5 +70,11 @@ const ClientSchema = new Schema<IClientModel>(
         id: false,
     }
 );
+
+ClientSchema.virtual('assignment', {
+    ref: AssignmentModel,
+    localField: 'assignment_id',
+    foreignField: '_id',
+});
 
 export const ClientModel = model<IClientModel>('ClientModel', ClientSchema, 'clients');

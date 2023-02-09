@@ -5,14 +5,15 @@ import { IFilterModel } from '../03-models/filter-model';
 import path from 'path';
 import ErrorModel from '../03-models/error-model';
 import imageLogic from './image-logic';
+import { ClientModel } from '../03-models/client-model';
 
 
 // Get all assignments without the image data
 async function getAllAssignments(): Promise<IAssignmentModel[]> {
-    return AssignmentModel.find().select("-imageFile").select("-image")
-        .populate({path:'user', select: '-_id user_id'})
-        .populate({path:'client', select: '-_id'})
-        .populate({path:'image', select: '-_id name'}).exec()
+    return AssignmentModel.find().select("-imageFile -image")
+        .populate({ path: 'user', select: '-_id user_id' })
+        .populate({ path: 'client', select: '-_id -assignment_id' })
+        .populate({ path: 'image', select: '-_id name' }).exec()
 }
 
 
@@ -34,7 +35,6 @@ async function addAssignment(assignment: IAssignmentModel): Promise<IAssignmentM
 
     // Only if images were sent.
     if (assignment.imageFile && assignment.imageFile.length) {
-
         for (const imageExt of assignment.imageFile) {
             const extension = imageExt.name.substring(imageExt.name.lastIndexOf('.'));
             const imageName = `${uuid()}${extension}`;
@@ -46,12 +46,13 @@ async function addAssignment(assignment: IAssignmentModel): Promise<IAssignmentM
                 name: imageName,
                 mimetype: imageExt.mimetype,
                 size: imageExt.size,
-                assaignment_id: assignment._id
+                assignment_id: assignment._id
             });
 
             const savedImage = await newImage.save();
             // Add the id of the saved image to the assignment's image_id array
             assignment.image_id.push(savedImage._id);
+            await ClientModel.updateMany({ assignment: assignment._id })
         }
         // Remove the original images array
         assignment.imageFile = [];

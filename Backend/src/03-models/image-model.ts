@@ -7,7 +7,7 @@ export interface IImageModel extends Document {
     name: string;
     mimetype: string;
     size: number;
-    assaignment_id: Schema.Types.ObjectId;
+    assignment_id: Schema.Types.ObjectId;
 }
 
 export const ImageScheme = new Schema<IImageModel>(
@@ -37,7 +37,7 @@ export const ImageScheme = new Schema<IImageModel>(
             required: true,
             max: 2 * 1024 * 1024,
         },
-        assaignment_id: {
+        assignment_id: {
             type: Schema.Types.ObjectId,
         },
 
