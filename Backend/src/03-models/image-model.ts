@@ -2,8 +2,6 @@ import { Document, model, Schema } from 'mongoose';
 
 
 export interface IImageModel extends Document {
-    // image: UploadedFile;
-    // encoding: string;
     name: string;
     mimetype: string;
     size: number;
@@ -12,21 +10,11 @@ export interface IImageModel extends Document {
 
 export const ImageScheme = new Schema<IImageModel>(
     {
-        // image: {
-        //     type: Object,
-        //     required: true,
-        //     max: 2 * 1024 * 1024,
-        // },
-
         name: {
             type: String,
             required: true,
             match: /\.(jpeg|jpg|png)$/,
         },
-        // encoding: {
-        //     type: String,
-        //     required: true,
-        // },
         mimetype: {
             type: String,
             required: true,
@@ -40,7 +28,6 @@ export const ImageScheme = new Schema<IImageModel>(
         assignment_id: {
             type: Schema.Types.ObjectId,
         },
-
     },
     {
         versionKey: false,
