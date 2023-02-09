@@ -1,10 +1,9 @@
 import { Document, model, Schema } from 'mongoose';
 import { UploadedFile } from 'express-fileupload';
-import { UserModel } from './user-model';
-import { ImageModel } from './image-model';
-import { ClientModel } from './client-model';
+
 
 export interface IAssignmentModel extends Document {
+    date: Date;
     description: string;
     user_id: Schema.Types.ObjectId;
     client_id: Schema.Types.ObjectId;
@@ -13,6 +12,16 @@ export interface IAssignmentModel extends Document {
 }
 
 const AssignmentSchema = new Schema<IAssignmentModel>({
+    date: {
+        type: Date,
+        required: true,
+        validate: {
+            validator: function (value: Date) {
+                return value > new Date();
+            },
+            message: 'Date must be in the future.'
+        }
+    },
     description: {
         type: String,
         minlength: [2, 'Too short.'],

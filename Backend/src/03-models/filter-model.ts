@@ -2,13 +2,21 @@ import { Document, model, Schema } from 'mongoose';
 
 
 export interface IFilterModel extends Document {
+  fullName: string;
   city: string;
   street: string;
   buildingNumber: number;
-  fullName: string;
 }
 
 const filterSchema = new Schema<IFilterModel>({
+  fullName: {
+    type: String,
+    required: [true, "Full name is required"],
+    validate: {
+      validator: (fullName: string) => fullName.length >= 1 && fullName.length <= 50,
+      message: "Full name should be between 1 and 50 characters"
+    }
+  },
   city: {
     type: String,
     required: [true, "City is required"],
@@ -31,14 +39,6 @@ const filterSchema = new Schema<IFilterModel>({
     validate: {
       validator: (buildingNumber: number) => Number.isInteger(buildingNumber),
       message: "Building number must be a number"
-    }
-  },
-  fullName: {
-    type: String,
-    required: [true, "Full name is required"],
-    validate: {
-      validator: (fullName: string) => fullName.length >= 1 && fullName.length <= 50,
-      message: "Full name should be between 1 and 50 characters"
     }
   }
 });

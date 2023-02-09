@@ -8,6 +8,7 @@ export interface IClientModel extends Document {
     floor: number;
     apartmentNumber: number;
     phoneNumber: [number];
+    assaignment_id: [Schema.Types.ObjectId];
 }
 
 const ClientSchema = new Schema<IClientModel>(
@@ -57,7 +58,10 @@ const ClientSchema = new Schema<IClientModel>(
             required: [true, "Phone number is missing"],
             minlength: [9, 'Phone Number must be more then 8 digits.'],
             max: [10, 'Phone Number cannot be more then 8 digits.'],
-        }
+        },
+        assaignment_id: [{
+            type: Schema.Types.ObjectId,
+        }]
     },
     {
         versionKey: false,
