@@ -6,14 +6,16 @@ import path from 'path';
 import ErrorModel from '../03-models/error-model';
 import imageLogic from './image-logic';
 import { ClientModel } from '../03-models/client-model';
+import { ObjectId } from 'mongoose';
 
 
 // Get all assignments without the image data
 async function getAllAssignments(): Promise<IAssignmentModel[]> {
-    return AssignmentModel.find().select("-imageFile -image")
+    const assignments = await AssignmentModel.find().select("-imageFile -image")
         .populate({ path: 'user', select: '-_id user_id' })
         .populate({ path: 'client', select: '-_id -assignment_id' })
-        .populate({ path: 'image', select: '-_id name' }).exec()
+        .populate({ path: 'image', select: '-_id name' }).lean().exec();
+    return assignments as IAssignmentModel[];
 }
 
 
@@ -25,109 +27,106 @@ async function getAssignmentsByClientId(clientId: string): Promise<IAssignmentMo
 
 // Function to add an assignment
 async function addAssignment(assignment: IAssignmentModel): Promise<IAssignmentModel> {
-
     try {
         await assignment.validate();
     } catch (error) {
         throw new ErrorModel(400, error.message);
     }
 
-
-    // Only if images were sent.
     if (assignment.imageFile && assignment.imageFile.length) {
+        const image_id: ObjectId[] = [];
         for (const imageExt of assignment.imageFile) {
             const extension = imageExt.name.substring(imageExt.name.lastIndexOf('.'));
             const imageName = `${uuid()}${extension}`;
             const absolutePath = path.join(__dirname, '..', 'assets', 'images', imageName);
-            // Move the image to the specified directory
+
             await imageExt.mv(absolutePath);
-            // Save the image in the ImageModel collection
-            const newImage = new ImageModel({
+
+            const savedImage = await new ImageModel({
                 name: imageName,
                 mimetype: imageExt.mimetype,
                 size: imageExt.size,
                 assignment_id: assignment._id
-            });
+            }).save();
 
-            const savedImage = await newImage.save();
-            // Add the id of the saved image to the assignment's image_id array
-            assignment.image_id.push(savedImage._id);
-            await ClientModel.updateMany({ assignment: assignment._id })
+            image_id.push(savedImage._id);
         }
-        // Remove the original images array
-        assignment.imageFile = [];
+        assignment.image_id = image_id;
+        assignment.imageFile = []
     }
-    // Create a new assignment model with the data
 
-    const newAssignment = new AssignmentModel(assignment);
-    // Save and return the new assignment
-    return newAssignment.save();
+    const savedAssignment = await new AssignmentModel(assignment).save();
+
+    await ClientModel.updateMany({ _id: assignment.client_id }, { $push: { assignment_id: savedAssignment._id } }).exec();
+
+    return AssignmentModel.findById(savedAssignment._id)
+        .populate({ path: 'user', select: '-_id user_id' })
+        .populate({ path: 'client', select: '-_id -assignment_id' })
+        .populate({ path: 'image', select: '-_id name' }).exec();
 }
+
 
 
 // Function to update an assignment
 async function updateAssingment(assignment: IAssignmentModel): Promise<IAssignmentModel> {
-    // Check if the assignment object is valid
+
     try {
         await assignment.validate();
     } catch (error) {
         throw new ErrorModel(400, error.message);
     }
 
-    // Find the old assignment by its id
-    const oldAssignment = await AssignmentModel.findById({ assignment: assignment._id });
+    const oldAssignment = await AssignmentModel.findById({ assignment: assignment._id }).exec();
 
-    // Check if the client has sent an updated image
-    if (assignment.imageFile && assignment.imageFile.length) {
-        // Get the old image ids
-        const oldImagesIds = oldAssignment.image_id;
-        // Loop through the old image ids
-        for (let i = 0; i < oldImagesIds.length; i++) {
-            await imageLogic.updateImage(oldImagesIds[i], assignment.imageFile[i]);
+    const updatedAssignment: any = {};
+    for (const key in assignment) {
+        if (key === 'imageFile' && assignment.imageFile && assignment.imageFile.length) {
+            const oldImagesIds = oldAssignment.image_id;
+            // Loop through the old image ids
+            for (let i = 0; i < oldImagesIds.length; i++) {
+                await imageLogic.updateImage(oldImagesIds[i], assignment.imageFile[i]);
+            }
+        } else if (assignment[key] !== oldAssignment[key]) {
+            updatedAssignment[key] = assignment[key];
         }
-    } else {
-        // If the client has not sent an updated image, set the image_id to the old image ids
-        assignment.image_id = oldAssignment.image_id;
     }
-    // Update the assignment and get the new data
-    const updatedAssignment = await AssignmentModel.findByIdAndUpdate(assignment._id, assignment, { new: true }).exec()
-    if (!updatedAssignment) {
-        // Throw an error if the assignment is not found
+
+    // If the client has not sent an updated image, set the image_id to the old image ids
+    if (!updatedAssignment.image_id) {
+        updatedAssignment.image_id = oldAssignment.image_id;
+    }
+
+    const updated = await AssignmentModel.findByIdAndUpdate(assignment._id, updatedAssignment, { new: true }).exec()
+    if (!updated) {
         throw new ErrorModel(404, `_id ${assignment._id} not found`);
     }
-    // Return the updated assignment data
-    return updatedAssignment;
+    return updated;
 }
 
 // Function to delete an assignment
 async function deleteAssignment(assignmentId: string): Promise<void> {
-    // Find the assignment by its id
     const assignment = await AssignmentModel.findById(assignmentId);
     if (!assignment) {
-        // Throw an error if the assignment is not found
         throw new ErrorModel(404, `Assignment with _id ${assignmentId} not found`);
     }
-    // Get the image ids related to the assignment
     const imageIds = assignment.image_id;
-    // Loop through the image ids
+
     for (let i = 0; i < imageIds.length; i++) {
         await imageLogic.deleteImage(imageIds[i])
     }
-    //Delete the assignment based on its id
+
     await AssignmentModel.findByIdAndDelete(assignmentId).exec();
 }
 
 // Function to filter assignments
 async function filterAssignments(filters: IFilterModel): Promise<IAssignmentModel[]> {
-    // Validate the filters to ensure they are in the correct format
+
     try {
         await filters.validate();
     } catch (error) {
-        // If the filters are invalid, throw an error with a status code of 400 and an error message
         throw new ErrorModel(400, error.message);
     }
 
-    // Initialize an empty filterCriteria object
     let filterCriteria = {};
 
     // Iterate over the filters and add each filter to the filterCriteria object
@@ -135,9 +134,8 @@ async function filterAssignments(filters: IFilterModel): Promise<IAssignmentMode
         filterCriteria[key] = value;
     }
 
-    // Find all assignments that match the filter criteria
-    // and exclude the "image" field from the returned assignments
-    return AssignmentModel.find(filterCriteria).select("-image").exec();
+
+    return AssignmentModel.find(filterCriteria).select("-imageFile").exec();
 }
 
 export default {

@@ -2,21 +2,39 @@ import { ClientModel, IClientModel } from './../03-models/client-model';
 
 
 async function getAllClients(): Promise<IClientModel[]> {
-    return ClientModel.find()
+    const clients = await ClientModel.find()
         .populate({
             path: 'assignment',
-            select: '_id date description image_id',
-            populate: {
-                path: 'image_id',
-                select: 'name'
-            }
+            select: '_id date description', populate: { path: 'image_id', select: 'name' }
         })
         .select('-imageFile')
+        .lean()
         .exec()
+
+    const modifiedClients = clients.map((client: any) => {
+        client.assignment.forEach((assignment: any) => {
+            assignment.images = assignment.image_id
+            delete assignment.image_id
+            delete client.assignment_id
+        });
+        return client;
+    });
+
+    return modifiedClients as IClientModel[]
 }
 
 async function getClientById(_id: string): Promise<IClientModel> {
-    return ClientModel.findById(_id).exec()
+    const client = await ClientModel.findById(_id).populate({
+        path: 'assignment',
+        select: '_id date description image_id',
+        populate: {
+            path: 'image_id',
+            select: 'name'
+        }
+    })
+        .select('-imageFile')
+        .exec()
+    return client as IClientModel
 }
 
 async function addClient(client: IClientModel): Promise<IClientModel> {

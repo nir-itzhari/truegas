@@ -14,6 +14,17 @@ router.get('/clients', async (request: Request, response: Response, next: NextFu
 }
 );
 
+router.get('/clients/:_id', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+    try {
+        const _id = request.params._id
+        const client = await clientLogic.getClientById(_id);
+        response.status(200).json(client);
+    } catch (err: any) {
+        next(err);
+    }
+}
+);
+
 
 router.post('/client', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {

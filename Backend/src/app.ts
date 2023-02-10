@@ -1,8 +1,10 @@
 import express, { NextFunction, Request, Response } from "express";
+import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 import cors from "cors";
 import config from "./01-utils/config";
+mongoose.set('strictQuery', false);
 import dal from "./04-dal/dal"
 dal.connect()
 import fileUpload from 'express-fileupload';

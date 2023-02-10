@@ -8,7 +8,7 @@ export interface IAssignmentModel extends Document {
     description: string;
     user_id: Schema.Types.ObjectId;
     client_id: Schema.Types.ObjectId;
-    image_id: [Schema.Types.ObjectId];
+    image_id: Array<Schema.Types.ObjectId>;
     imageFile: UploadedFile[];
 }
 

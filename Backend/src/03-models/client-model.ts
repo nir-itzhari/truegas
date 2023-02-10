@@ -9,7 +9,7 @@ export interface IClientModel extends Document {
     floor: number;
     apartmentNumber: number;
     phoneNumber: [number];
-    assignment_id: [Schema.Types.ObjectId];
+    assignment_id: Array<Schema.Types.ObjectId>;
 }
 
 const ClientSchema = new Schema<IClientModel>(
