@@ -8,8 +8,8 @@ export interface IClientModel extends Document {
     buildingNumber: number;
     floor: number;
     apartmentNumber: number;
-    phoneNumber: [number];
-    assignment_id: Array<Schema.Types.ObjectId>;
+    phoneNumber: number[];
+    assignment_id: Schema.Types.ObjectId[];
 }
 
 const ClientSchema = new Schema<IClientModel>(
@@ -60,9 +60,9 @@ const ClientSchema = new Schema<IClientModel>(
             minlength: [9, 'Phone Number must be more then 8 digits.'],
             max: [10, 'Phone Number cannot be more then 8 digits.'],
         },
-        assignment_id: [{
-            type: Schema.Types.ObjectId,
-        }]
+        assignment_id: {
+            type: [Schema.Types.ObjectId],
+        }
     },
     {
         versionKey: false,
