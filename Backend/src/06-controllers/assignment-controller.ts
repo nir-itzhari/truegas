@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express';
-import mongoose, { Schema } from 'mongoose';
+import { Schema } from 'mongoose';
 import { AssignmentModel } from '../03-models/assignment-model';
 import assignmentsLogic from '../05-logic/assignment-logic';
 import imageLogic from '../05-logic/image-logic';
@@ -57,9 +57,10 @@ router.put('/assignment', async (request: Request, response: Response, next: Nex
     }
 }
 );
-router.delete('/assignment/image', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+router.delete('/assignment/:image_id', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
-        await imageLogic.deleteImage(request.body._id)
+        const _id = new Schema.Types.ObjectId(request.params.image_id)
+        await imageLogic.deleteImage(_id)
 
         response.sendStatus(204)
     } catch (err) {
