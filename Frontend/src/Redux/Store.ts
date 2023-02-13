@@ -8,7 +8,7 @@ import { authReducer } from './AuthState';
 
 
 const reducer = combineReducers({
-    AssignmetnsState: AssignmentsReducer,
+    AssignmentsState: AssignmentsReducer,
     authState: authReducer
 });
 

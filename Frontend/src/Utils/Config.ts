@@ -5,9 +5,9 @@ class DevelopmentConfig extends Config {
     public isDevelopment = true;
     public assignmentsUrl = "http://localhost:3003/api/assignments/";
     public assignmentsImageUrl = "http://localhost:3003/assets/images/";
-    // public registerUrl = "http://localhost:3003/api/auth/register/";
     public loginUrl = "http://localhost:3003/api/auth/login/";
-    public socketUrl = "http://localhost:3003";
+    // public registerUrl = "http://localhost:3003/api/auth/register/";
+    // public socketUrl = "http://localhost:3003";
 }
 
 // class ProductionConfig extends Config {

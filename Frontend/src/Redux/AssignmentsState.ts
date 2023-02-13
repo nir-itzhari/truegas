@@ -1,7 +1,7 @@
 import AssignmentModel from '../Models/AssignmentModel';
 
 export class AssignmentsState {
-    public assignmetns: AssignmentModel[] = [];
+    public assignments: AssignmentModel[] = [];
 
 }
 
@@ -37,21 +37,21 @@ export const AssignmentsReducer = (currentState = new AssignmentsState(), action
 
     switch (action.type) {
         case AssignmentsActionType.FetchAssignments:
-            newState.assignmetns = action.payload;
+            newState.assignments = action.payload;
             break;
         case AssignmentsActionType.AddAssignment:
-            newState.assignmetns.push(action.payload);
+            newState.assignments.push(action.payload);
             break;
         case AssignmentsActionType.UpdateAssignment:
-            const indexToUpdate = newState.assignmetns.findIndex(a => a.assignmentId === action.payload.assignmentId);
+            const indexToUpdate = newState.assignments.findIndex(a => a.assignmentId === action.payload.assignmentId);
             if (indexToUpdate >= 0) {
-                newState.assignmetns[indexToUpdate] = action.payload;
+                newState.assignments[indexToUpdate] = action.payload;
             }
             break;
         case AssignmentsActionType.DeleteAssignment:
-            const indexToDelete = newState.assignmetns.findIndex(a => a.assignmentId === action.payload);
+            const indexToDelete = newState.assignments.findIndex(a => a.assignmentId === action.payload);
             if (indexToDelete >= 0) {
-                newState.assignmetns.splice(indexToDelete, 1);
+                newState.assignments.splice(indexToDelete, 1);
             }
     }
 
