@@ -16,7 +16,6 @@ async function updateImage(oldImageId: Schema.Types.ObjectId, newImage: Uploaded
     }
     const oldImageName = oldImage.name;
     const oldImageAbsolutePath = path.join(__dirname, '..', 'assets', 'images', oldImageName);
-
     const extension = newImage.name.substring(newImage.name.lastIndexOf('.'));
     const imageUrl = `${uuid()}${extension}`;
     const absolutePath = path.join(__dirname, '..', 'assets', 'images', imageUrl);

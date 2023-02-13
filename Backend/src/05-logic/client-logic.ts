@@ -24,6 +24,7 @@ async function getAllClients(): Promise<IClientModel[]> {
     return modifiedClients as IClientModel[]
 }
 
+
 async function getClientById(_id: string): Promise<IClientModel> {
     const client = await ClientModel.findById(_id).populate({
         path: 'assignment',
@@ -39,9 +40,11 @@ async function getClientById(_id: string): Promise<IClientModel> {
     return client as IClientModel
 }
 
+
 async function addClient(client: IClientModel): Promise<IClientModel> {
     return client.save()
 }
+
 
 async function updateClient(clientToUpdate: IClientModel): Promise<IClientModel> {
     const { _id } = clientToUpdate
@@ -49,10 +52,12 @@ async function updateClient(clientToUpdate: IClientModel): Promise<IClientModel>
     return updatedClient;
 }
 
+
 async function deleteClient(_id: Schema.Types.ObjectId): Promise<IClientModel> {
     const deletedClient = await ClientModel.findByIdAndDelete(_id).exec();
     return deletedClient;
 }
+
 
 export default {
     getAllClients,

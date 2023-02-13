@@ -48,7 +48,6 @@ async function addAssignment(assignment: IAssignmentModel): Promise<IAssignmentM
                 size: imageExt.size,
                 assignment_id: assignment._id
             }).save();
-
             image_id.push(savedImage._id);
         }
         assignment.image_id = image_id;
@@ -56,7 +55,6 @@ async function addAssignment(assignment: IAssignmentModel): Promise<IAssignmentM
     }
 
     const savedAssignment = await new AssignmentModel(assignment).save();
-
     await ClientModel.updateMany({ _id: assignment.client_id }, { $push: { assignment_id: savedAssignment._id } }).exec();
 
     return AssignmentModel.findById(savedAssignment._id)
@@ -126,7 +124,6 @@ async function updateAssignment(assignment_id: Schema.Types.ObjectId, assignment
     if (!updatedAssignment) {
         throw new ErrorModel(404, `_id ${assignment_id} not found`);
     }
-
     return updatedAssignment;
 }
 
@@ -145,6 +142,7 @@ async function deleteAssignment(_id: Schema.Types.ObjectId): Promise<void> {
     await AssignmentModel.findByIdAndDelete(_id).exec();
 }
 
+
 // Function to filter assignments
 async function filterAssignments(filters: IFilterModel): Promise<IAssignmentModel[]> {
 
@@ -160,8 +158,6 @@ async function filterAssignments(filters: IFilterModel): Promise<IAssignmentMode
     for (const [key, value] of Object.entries(filters)) {
         filterCriteria[key] = value;
     }
-
-
     return AssignmentModel.find(filterCriteria).select("-imageFile").exec();
 }
 

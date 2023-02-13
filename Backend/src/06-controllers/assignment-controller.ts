@@ -6,6 +6,7 @@ import imageLogic from '../05-logic/image-logic';
 
 const router = express.Router();
 
+
 router.get('/assignments', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
         const assignments = await assignmentsLogic.getAllAssignments();
@@ -58,6 +59,8 @@ router.put('/assignments/:_id', async (request: Request, response: Response, nex
     }
 }
 );
+
+
 router.delete('/assignments/:image_id', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
         const _id = new Schema.Types.ObjectId(request.params.image_id)
@@ -69,5 +72,6 @@ router.delete('/assignments/:image_id', async (request: Request, response: Respo
     }
 }
 );
+
 
 export default router;

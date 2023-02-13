@@ -5,6 +5,7 @@ import { Schema } from 'mongoose';
 
 const router = express.Router();
 
+
 router.get('/clients', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
         const assignments = await clientLogic.getAllClients();
@@ -14,6 +15,7 @@ router.get('/clients', async (request: Request, response: Response, next: NextFu
     }
 }
 );
+
 
 router.get('/clients/:_id', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
@@ -39,6 +41,7 @@ router.post('/client', async (request: Request, response: Response, next: NextFu
 }
 );
 
+
 router.put('/client/:clientId', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
         const { clientId } = request.params
@@ -54,6 +57,7 @@ router.put('/client/:clientId', async (request: Request, response: Response, nex
 }
 );
 
+
 router.delete('/client/:clientId', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
         const { clientId } = request.params
@@ -66,5 +70,6 @@ router.delete('/client/:clientId', async (request: Request, response: Response, 
     }
 }
 );
+
 
 export default router;

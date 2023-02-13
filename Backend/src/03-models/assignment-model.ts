@@ -44,7 +44,6 @@ const AssignmentSchema = new Schema<IAssignmentModel>({
         versionKey: false,
         toJSON: { virtuals: true },
         id: false,
-
     });
 
 
@@ -57,8 +56,6 @@ virtuals.forEach(virtual => {
         localField: `${virtual}_id`,
         foreignField: '_id',
     });
-
 });
-
 
 export const AssignmentModel = model<IAssignmentModel>('AssignmentModel', AssignmentSchema, 'assignment');

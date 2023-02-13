@@ -15,8 +15,6 @@ import assignmentController from "./06-controllers/assignment-controller";
 import clientController from "./06-controllers/client-controller";
 
 
-
-
 const expressServer = express();
 expressServer.use(express.json());
 
