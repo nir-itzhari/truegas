@@ -21,14 +21,14 @@ export const fetchAssignmentsAction = (assignments: AssignmentModel[]): Assignme
     return { type: AssignmentsActionType.FetchAssignments, payload: assignments };
 }
 
-export const addAssignmentAction = (vacation: AssignmentModel): AssignmentAction => {
-    return { type: AssignmentsActionType.AddAssignment, payload: vacation };
+export const addAssignmentAction = (assignment: AssignmentModel): AssignmentAction => {
+    return { type: AssignmentsActionType.AddAssignment, payload: assignment };
 }
-export const updateAssignmentAction = (vacation: AssignmentModel): AssignmentAction => {
-    return { type: AssignmentsActionType.UpdateAssignment, payload: vacation };
+export const updateAssignmentAction = (assignment: AssignmentModel): AssignmentAction => {
+    return { type: AssignmentsActionType.UpdateAssignment, payload: assignment };
 }
-export const deleteAssignmentAction = (vacationId: string): AssignmentAction => {
-    return { type: AssignmentsActionType.DeleteAssignment, payload: vacationId };
+export const deleteAssignmentAction = (assignmentId: string): AssignmentAction => {
+    return { type: AssignmentsActionType.DeleteAssignment, payload: assignmentId };
 }
 
 
