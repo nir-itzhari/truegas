@@ -32,7 +32,8 @@ async function updateImage(oldImageId: Schema.Types.ObjectId, newImage: Uploaded
     }
 }
 
-async function deleteImage(imageId: Schema.Types.ObjectId) {
+
+async function deleteImage(imageId: Schema.Types.ObjectId): Promise<void> {
     try {
         const imageToDelete = await ImageModel.findById(imageId).exec();
         if (!imageToDelete) {
@@ -50,10 +51,10 @@ async function deleteImage(imageId: Schema.Types.ObjectId) {
             await AssignmentModel.findByIdAndUpdate(assignment._id, { $set: { image_id: assignment.image_id } }).exec();
         }
     } catch (error) {
-
         throw new ErrorModel(500, error.message);
     }
 }
+
 
 export default {
     updateImage,

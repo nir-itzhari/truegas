@@ -1,10 +1,11 @@
 import { Document, model, Schema } from 'mongoose';
 import { UploadedFile } from 'express-fileupload';
 import { ImageModel } from './image-model';
+import { validateDateString } from '../01-utils/validations';
 
 
 export interface IAssignmentModel extends Document {
-    date: string;
+    date: Date;
     description: string;
     user_id: Schema.Types.ObjectId;
     client_id: Schema.Types.ObjectId;
@@ -14,7 +15,10 @@ export interface IAssignmentModel extends Document {
 
 const AssignmentSchema = new Schema<IAssignmentModel>({
     date: {
-        type: String,
+        type: Date,
+        set: (value: string): Date => {
+            return validateDateString(value)
+        }
     },
     description: {
         type: String,

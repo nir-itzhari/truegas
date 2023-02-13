@@ -1,4 +1,5 @@
 import { ClientModel, IClientModel } from './../03-models/client-model';
+import { Schema } from 'mongoose';
 
 
 async function getAllClients(): Promise<IClientModel[]> {
@@ -11,7 +12,7 @@ async function getAllClients(): Promise<IClientModel[]> {
         .lean()
         .exec()
 
-    const modifiedClients = clients.map((client: any) => {
+    const modifiedClients: IClientModel[] = clients.map((client: any) => {
         client.assignment.forEach((assignment: any) => {
             assignment.images = assignment.image_id
             delete assignment.image_id
@@ -33,6 +34,7 @@ async function getClientById(_id: string): Promise<IClientModel> {
         }
     })
         .select('-imageFile')
+        .lean()
         .exec()
     return client as IClientModel
 }
@@ -41,13 +43,13 @@ async function addClient(client: IClientModel): Promise<IClientModel> {
     return client.save()
 }
 
-async function updateClient(clientToUpdate: Partial<IClientModel>): Promise<IClientModel> {
+async function updateClient(clientToUpdate: IClientModel): Promise<IClientModel> {
     const { _id } = clientToUpdate
     const updatedClient = await ClientModel.findByIdAndUpdate(_id, { $set: clientToUpdate }, { new: true }).exec();
     return updatedClient;
 }
 
-async function deleteClient(_id: string): Promise<IClientModel> {
+async function deleteClient(_id: Schema.Types.ObjectId): Promise<IClientModel> {
     const deletedClient = await ClientModel.findByIdAndDelete(_id).exec();
     return deletedClient;
 }

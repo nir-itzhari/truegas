@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { Schema } from 'mongoose';
+import { Schema, ObjectId } from 'mongoose';
 import { AssignmentModel } from '../03-models/assignment-model';
 import assignmentsLogic from '../05-logic/assignment-logic';
 import imageLogic from '../05-logic/image-logic';
@@ -30,13 +30,13 @@ router.get('/assignments/:clientId', async (request: Request, response: Response
 );
 
 
-router.post('/assignment', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+router.post('/assignments', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
         request.body.imageFile = request.files?.imageFile
         const assignment = new AssignmentModel(request.body);
         const addedAssignments = await assignmentsLogic.addAssignment(assignment);
 
-        response.json(addedAssignments);
+        response.status(201).json(addedAssignments);
     } catch (err: any) {
         next(err);
     }
@@ -44,12 +44,13 @@ router.post('/assignment', async (request: Request, response: Response, next: Ne
 );
 
 
-router.put('/assignment', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+router.put('/assignments/:_id', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
+        const { _id } = request.params
+        const assignment_id = new Schema.Types.ObjectId(_id)
         request.body.imageFile = request.files?.imageFile
-
         const assignment = new AssignmentModel(request.body);
-        const updatedAssignments = await assignmentsLogic.updateAssignment(assignment);
+        const updatedAssignments = await assignmentsLogic.updateAssignment(assignment_id, assignment);
 
         response.json(updatedAssignments);
     } catch (err: any) {
@@ -57,7 +58,7 @@ router.put('/assignment', async (request: Request, response: Response, next: Nex
     }
 }
 );
-router.delete('/assignment/:image_id', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+router.delete('/assignments/:image_id', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
         const _id = new Schema.Types.ObjectId(request.params.image_id)
         await imageLogic.deleteImage(_id)

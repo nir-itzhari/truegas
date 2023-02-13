@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { ClientModel } from '../03-models/client-model';
 import clientLogic from '../05-logic/client-logic';
+import { Schema } from 'mongoose';
 
 const router = express.Router();
 
@@ -38,8 +39,11 @@ router.post('/client', async (request: Request, response: Response, next: NextFu
 }
 );
 
-router.put('/client', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+router.put('/client/:clientId', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
+        const { clientId } = request.params
+        const clientObjectId = new Schema.Types.ObjectId(clientId)
+        request.body._id = clientObjectId
         const clientDetailsToUpdate = new ClientModel(request.body)
         const updatedClient = await clientLogic.updateClient(clientDetailsToUpdate);
 
@@ -53,7 +57,8 @@ router.put('/client', async (request: Request, response: Response, next: NextFun
 router.delete('/client/:clientId', async (request: Request, response: Response, next: NextFunction): Promise<void> => {
     try {
         const { clientId } = request.params
-        await clientLogic.deleteClient(clientId);
+        const clientObjectId = new Schema.Types.ObjectId(clientId)
+        await clientLogic.deleteClient(clientObjectId);
 
         response.sendStatus(204)
     } catch (err: any) {

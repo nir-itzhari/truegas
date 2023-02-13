@@ -67,17 +67,17 @@ async function addAssignment(assignment: IAssignmentModel): Promise<IAssignmentM
 
 
 
-// Function to update an assignment
-async function updateAssignment(assignment: IAssignmentModel): Promise<IAssignmentModel> {
+// Function to update an assignment - dynamic
+async function updateAssignment(assignment_id: Schema.Types.ObjectId, assignment: IAssignmentModel): Promise<IAssignmentModel> {
     try {
         await assignment.validate();
     } catch (error) {
         throw new ErrorModel(400, error.message);
     }
 
-    const oldAssignment = await AssignmentModel.findById(assignment._id).exec();
+    const oldAssignment = await AssignmentModel.findById(assignment_id).exec();
     if (!oldAssignment) {
-        throw new ErrorModel(404, `_id ${assignment._id} not found`);
+        throw new ErrorModel(404, `_id ${assignment_id} not found`);
     }
 
     let updatedImageIds: ObjectId[] = oldAssignment.image_id;
@@ -96,7 +96,7 @@ async function updateAssignment(assignment: IAssignmentModel): Promise<IAssignme
 
     if (assignment.imageFile && assignment.imageFile.length) {
         for (const imageFile of assignment.imageFile) {
-            
+
             const extension = imageFile.name.substring(imageFile.name.lastIndexOf('.'));
             const imageName = `${uuid()}${extension}`;
             const absolutePath = path.join(__dirname, '..', 'assets', 'images', imageName);
@@ -104,7 +104,7 @@ async function updateAssignment(assignment: IAssignmentModel): Promise<IAssignme
                 name: imageName,
                 mimetype: imageFile.mimetype,
                 size: imageFile.size,
-                assignment_id: assignment._id
+                assignment_id: assignment_id
             }).save();
             updatedImageIds.push(newImage._id);
             await imageFile.mv(absolutePath);
@@ -112,7 +112,7 @@ async function updateAssignment(assignment: IAssignmentModel): Promise<IAssignme
     }
 
     const updatedAssignment = await AssignmentModel.findByIdAndUpdate(
-        assignment._id,
+        assignment_id,
         {
             date: assignment.date || oldAssignment.date,
             description: assignment.description || oldAssignment.description,
@@ -124,7 +124,7 @@ async function updateAssignment(assignment: IAssignmentModel): Promise<IAssignme
     ).exec();
 
     if (!updatedAssignment) {
-        throw new ErrorModel(404, `_id ${assignment._id} not found`);
+        throw new ErrorModel(404, `_id ${assignment_id} not found`);
     }
 
     return updatedAssignment;
@@ -132,17 +132,17 @@ async function updateAssignment(assignment: IAssignmentModel): Promise<IAssignme
 
 
 // Function to delete an assignment
-async function deleteAssignment(assignmentId: Schema.Types.ObjectId): Promise<void> {
-    const assignment = await AssignmentModel.findById(assignmentId);
+async function deleteAssignment(_id: Schema.Types.ObjectId): Promise<void> {
+    const assignment = await AssignmentModel.findById(_id);
     if (!assignment) {
-        throw new ErrorModel(404, `Assignment with _id ${assignmentId} not found`);
+        throw new ErrorModel(404, `Assignment with _id ${_id} not found`);
     }
     const imageIds = assignment.image_id;
 
     for (let i = 0; i < imageIds.length; i++) {
         await imageLogic.deleteImage(imageIds[i])
     }
-    await AssignmentModel.findByIdAndDelete(assignmentId).exec();
+    await AssignmentModel.findByIdAndDelete(_id).exec();
 }
 
 // Function to filter assignments
